@@ -23,8 +23,16 @@ const error = ref(null)
 
 onMounted(async () => {
   try {
-    // Simple GraphQL query with fetch
-    const response = await fetch('http://localhost:1337/graphql', {
+    // Use the runtime config which will use the correct URL for server or client
+    const config = useRuntimeConfig()
+    console.log('Using GraphQL URL:', config.graphqlUrl || config.public.graphqlUrl)
+    
+    // Get the appropriate URL based on execution context
+    const graphqlUrl = import.meta.server 
+      ? config.graphqlUrl // Server-side (backend:1337)
+      : config.public.graphqlUrl // Client-side (localhost:1337)
+    
+    const response = await fetch(graphqlUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
