@@ -1,14 +1,8 @@
 <template>
   <div class="container">
-    <div v-if="loading" class="content">
-      <p class="loading">Loading...</p>
-    </div>
-    <div v-else-if="error" class="content">
-      <p class="error">{{ error }}</p>
-    </div>
-    <div v-else class="content">
-      <h1 class="title">{{ landingPage?.Title || 'Welcome' }}</h1>
-      <p class="description">{{ landingPage?.Description || 'Coming soon' }}</p>
+    <div v-if="landingPage" class="content">
+      <h1 class="title">{{ landingPage.Title }}</h1>
+      <p class="description">{{ landingPage.Description }}</p>
     </div>
   </div>
 </template>
@@ -17,9 +11,7 @@
 import { ref, onMounted } from 'vue'
 import { useRuntimeConfig } from '#app'
 
-const landingPage = ref({ Title: 'Welcome', Description: 'Coming soon' })
-const loading = ref(true)
-const error = ref(null)
+const landingPage = ref(null)
 
 onMounted(async () => {
   try {
@@ -58,8 +50,6 @@ onMounted(async () => {
     }
   } catch (err) {
     console.error('Error:', err)
-  } finally {
-    loading.value = false
   }
 })
 </script>
@@ -93,13 +83,4 @@ onMounted(async () => {
   opacity: 0.9;
 }
 
-.loading {
-  font-size: 1.5rem;
-  opacity: 0.7;
-}
-
-.error {
-  color: #f56565;
-  font-size: 1.5rem;
-}
 </style>
