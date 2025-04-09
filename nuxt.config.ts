@@ -3,6 +3,11 @@ export default defineNuxtConfig({
   compatibilityDate: '2024-11-01',
   devtools: { enabled: true },
   
+  css: [
+    '~/assets/css/theme.css',
+    '~/assets/css/layout.css'
+  ],
+  
   runtimeConfig: {
     // Private config (server-side only)
     apiUrl: process.env.NUXT_PRIVATE_API_URL || 'http://backend:1337',

@@ -54,33 +54,4 @@ onMounted(async () => {
 })
 </script>
 
-<style scoped>
-.container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  padding: 1rem;
-}
-
-.content {
-  text-align: center;
-  max-width: 800px;
-}
-
-.title {
-  font-size: 3rem;
-  font-weight: 700;
-  margin-bottom: 1.5rem;
-  letter-spacing: -0.025em;
-}
-
-.description {
-  font-size: 1.25rem;
-  line-height: 1.7;
-  max-width: 36rem;
-  margin: 0 auto;
-  opacity: 0.9;
-}
-
-</style>
+<!-- No scoped styles needed as they're now in separate CSS files -->
