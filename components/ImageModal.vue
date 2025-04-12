@@ -88,8 +88,8 @@ function open(imageData, captionText) {
   isOpen.value = true
   carouselImages.value = [] // Clear any previous carousel data
   
-  // Set image and caption directly
-  image.value = imageData
+  // Start with null image to force placeholder
+  image.value = null
   caption.value = captionText
   
   // Save the current scroll position
@@ -101,16 +101,24 @@ function open(imageData, captionText) {
   document.body.style.width = '100%'
   document.body.style.top = `-${savedScrollPosition}px`
   document.documentElement.style.scrollBehavior = 'auto' // Prevent smooth scrolling when reopening
+  
+  // Set the image in next tick to ensure placeholder shows
+  nextTick(() => {
+    image.value = imageData
+  })
 }
 
 // Open function for carousel images
 function openCarousel(images, index, captions) {
   if (!images || !images.length) return
 
-  // Open modal
+  // Open modal with placeholder first
   isOpen.value = true
   carouselImages.value = images
   currentImageIndex.value = index || 0
+  
+  // Start with null image to ensure placeholder shows
+  image.value = null
 
   // Save the current scroll position
   savedScrollPosition = window.scrollY
@@ -122,12 +130,12 @@ function openCarousel(images, index, captions) {
   document.body.style.top = `-${savedScrollPosition}px`
   document.documentElement.style.scrollBehavior = 'auto'
   
-  // Set the current image and caption directly
-  const currentImage = carouselImages.value[currentImageIndex.value]
-  image.value = currentImage.image
-  caption.value = captions ? captions[currentImageIndex.value] : currentImage.caption
-  
-  // NuxtImg will handle preloading with the preload prop
+  // Set the image in the next tick to ensure placeholder shows first
+  nextTick(() => {
+    const currentImage = carouselImages.value[currentImageIndex.value]
+    image.value = currentImage.image
+    caption.value = captions ? captions[currentImageIndex.value] : currentImage.caption
+  })
 }
 
 // We'll use NuxtImg's preload prop instead of manual preloading
@@ -138,10 +146,15 @@ function showNextImage() {
   // Update index immediately 
   currentImageIndex.value++
   
-  // Set new image directly - NuxtImg will show placeholder until loaded
-  const currentImage = carouselImages.value[currentImageIndex.value]
-  image.value = currentImage.image
-  caption.value = currentImage.caption
+  // Force re-rendering by setting to null first (like in carousel)
+  image.value = null
+  
+  // Then set new image - this ensures the placeholder shows
+  nextTick(() => {
+    const currentImage = carouselImages.value[currentImageIndex.value]
+    image.value = currentImage.image
+    caption.value = currentImage.caption
+  })
 }
 
 function showPrevImage() {
@@ -150,10 +163,15 @@ function showPrevImage() {
   // Update index immediately
   currentImageIndex.value--
   
-  // Set new image directly - NuxtImg will show placeholder until loaded
-  const currentImage = carouselImages.value[currentImageIndex.value]
-  image.value = currentImage.image
-  caption.value = currentImage.caption
+  // Force re-rendering by setting to null first (like in carousel)
+  image.value = null
+  
+  // Then set new image - this ensures the placeholder shows
+  nextTick(() => {
+    const currentImage = carouselImages.value[currentImageIndex.value]
+    image.value = currentImage.image
+    caption.value = currentImage.caption
+  })
 }
 
 function close() {
