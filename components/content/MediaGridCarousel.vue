@@ -11,7 +11,7 @@
         <!-- Use NuxtImg with array syntax for placeholder -->
         <NuxtImg 
           :src="images[activeIndex].image.url"
-          :alt="images[activeIndex].caption || ''"
+          :alt="images[activeIndex].image.alternativeText || images[activeIndex].caption || ''"
           preset="carousel"
           loading="eager"
           preload
@@ -91,7 +91,9 @@ const images = computed(() => {
     imagesList.forEach((img, idx) => {
       console.log(`Image ${idx}:`, {
         url: img.image.url,
-        formats: img.image.formats
+        formats: img.image.formats,
+        alternativeText: img.image.alternativeText,
+        caption: img.caption
       })
     })
   }
@@ -226,6 +228,9 @@ function handleTouchEnd() {
   object-fit: contain;
   cursor: pointer;
   transition: opacity 0.2s;
+  
+  /* Prevent alt text from showing while placeholder is visible */
+  color: transparent !important;
 }
 
 .active-image:hover {
@@ -274,6 +279,9 @@ function handleTouchEnd() {
   height: 100%;
   object-fit: cover;
   transition: all 0.2s ease;
+  
+  /* Prevent alt text from showing while placeholder is visible */
+  color: transparent !important;
 }
 
 .thumbnail:not(.active) {
