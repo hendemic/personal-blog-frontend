@@ -80,6 +80,18 @@ onMounted(async () => {
                 alternativeText
               }
             }
+            ... on ComponentContentBlockMediaGrid {
+              displayType
+              images {
+                caption
+                image {
+                  url
+                  width
+                  height
+                  alternativeText
+                }
+              }
+            }
           }
         }
       }

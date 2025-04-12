@@ -14,6 +14,7 @@
 import HeadingBlock from '~/components/content/HeadingBlock.vue'
 import TextBlock from '~/components/content/TextBlock.vue'
 import ImageBlock from '~/components/content/ImageBlock.vue'
+import MediaGridCarousel from '~/components/content/MediaGridCarousel.vue'
 
 const props = defineProps({
   blocks: {
@@ -27,7 +28,7 @@ const componentMap = {
   ComponentContentBlockHeadingBlock: HeadingBlock,
   ComponentContentBlockTextBlock: TextBlock,
   ComponentContentBlockImageBlock: ImageBlock,
-  // MediaGrid is excluded for now as requested
+  ComponentContentBlockMediaGrid: MediaGridCarousel
 }
 
 // Check if we support this block type
