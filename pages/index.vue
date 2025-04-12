@@ -31,12 +31,8 @@ onMounted(async () => {
         query: `
           query {
             landingPage {
-              data {
-                attributes {
-                  Title
-                  Description
-                }
-              }
+              Title
+              Description
             }
           }
         `
@@ -45,8 +41,8 @@ onMounted(async () => {
     
     const result = await response.json()
     
-    if (result.data?.landingPage?.data?.attributes) {
-      landingPage.value = result.data.landingPage.data.attributes
+    if (result.data?.landingPage) {
+      landingPage.value = result.data.landingPage
     }
   } catch (err) {
     console.error('Error:', err)
