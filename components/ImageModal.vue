@@ -261,7 +261,7 @@ defineExpose({
   bottom: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.9);
+  background-color: rgba(0, 0, 0, 0.97);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -272,9 +272,16 @@ defineExpose({
   /* Fix for iOS and other mobile browsers */
   -webkit-overflow-scrolling: touch;
   overscroll-behavior: none;
-  /* Ensure the overlay covers the entire screen */
+  /* Ensure the overlay covers the entire screen including iOS notches and safe areas */
   min-height: 100vh;
   min-height: -webkit-fill-available;
+  margin: 0;
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+  /* Extend beyond default viewport boundaries */
+  width: 100vw;
+  max-width: 100vw;
+  height: 100vh;
+  max-height: -webkit-fill-available;
 }
 
 .modal-content {
@@ -413,6 +420,14 @@ defineExpose({
     height: -webkit-fill-available;
     min-height: stretch; /* Modern browsers */
     max-height: -webkit-fill-available;
+    /* Additional fixes for iOS dynamic island in landscape mode */
+    padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+    width: 100vw;
+    /* Prevent overlap issues */
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
   }
   
   .modal-image {

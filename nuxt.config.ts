@@ -3,6 +3,15 @@ export default defineNuxtConfig({
   compatibilityDate: '2024-11-01',
   devtools: { enabled: true },
   
+  app: {
+    head: {
+      viewport: 'width=device-width, initial-scale=1, viewport-fit=cover',
+      meta: [
+        { name: 'viewport-fit', content: 'cover' }
+      ]
+    }
+  },
+  
   css: [
     '~/assets/css/theme.css',
     '~/assets/css/typography.css',
