@@ -1,53 +1,11 @@
 <template>
   <div class="container">
-    <div v-if="landingPage" class="content">
-      <h1 class="title">{{ landingPage.Title }}</h1>
-      <p class="description">{{ landingPage.Description }}</p>
+    <div class="content">
+      <PostList />
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
-import { useRuntimeConfig } from '#app'
-
-const landingPage = ref(null)
-
-onMounted(async () => {
-  try {
-    // Use the runtime config which will use the correct URL for server or client
-    const config = useRuntimeConfig()
-    console.log('Using GraphQL URL:', config.graphqlUrl || config.public.graphqlUrl)
-    
-    // Get the appropriate URL based on execution context
-    const graphqlUrl = import.meta.server 
-      ? config.graphqlUrl // Server-side (backend:1337)
-      : config.public.graphqlUrl // Client-side (localhost:1337)
-    
-    const response = await fetch(graphqlUrl, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        query: `
-          query {
-            landingPage {
-              Title
-              Description
-            }
-          }
-        `
-      })
-    })
-    
-    const result = await response.json()
-    
-    if (result.data?.landingPage) {
-      landingPage.value = result.data.landingPage
-    }
-  } catch (err) {
-    console.error('Error:', err)
-  }
-})
+import PostList from '~/components/PostList.vue'
 </script>
-
-<!-- No scoped styles needed as they're now in separate CSS files -->

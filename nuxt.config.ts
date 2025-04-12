@@ -18,5 +18,10 @@ export default defineNuxtConfig({
       apiUrl: process.env.NUXT_PUBLIC_API_URL || 'http://localhost:1337',
       graphqlUrl: process.env.NUXT_PUBLIC_GRAPHQL_URL || 'http://localhost:1337/graphql'
     }
-  }
+  },
+  
+  // Register client-side plugins
+  plugins: [
+    '~/plugins/theme.client.js'
+  ]
 })

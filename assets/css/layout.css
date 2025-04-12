@@ -2,56 +2,83 @@
 
 /* Basic reset */
 * {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
 }
 
 /* Container layouts */
 .container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  padding: var(--spacing-md);
-  width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    padding: var(--spacing-md);
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
 }
 
 .content {
-  text-align: center;
-  max-width: 800px;
-  width: 100%;
+    max-width: 800px;
+    width: 100%;
+    margin-top: 150px; /* Adding whitespace at the top */
+    padding: 0 var(--spacing-md); /* Side margins for mobile */
+}
+
+/* Grid system */
+.two-column-grid {
+    display: grid;
+    grid-template-columns: 1fr 5fr;
+    gap: var(--grid-gutter);
+    width: 100%;
+}
+
+/* Grid columns */
+.grid-sidebar {
+    /* Styles for the left/sidebar column (1/6 width) */
+}
+
+.grid-main {
+    /* Styles for the main column (5/6 width) */
+}
+
+/* Responsive grid adjustments */
+@media (max-width: 768px) {
+    .two-column-grid {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-xs);
+    }
 }
 
 /* Typography layout */
 .title {
-  font-size: var(--font-size-3xl);
-  font-weight: var(--font-weight-bold);
-  margin-bottom: var(--spacing-lg);
-  letter-spacing: -0.025em;
+    font-size: var(--font-size-3xl);
+    font-weight: var(--font-weight-bold);
+    margin-bottom: var(--spacing-lg);
+    letter-spacing: -0.025em;
 }
 
 .description {
-  font-size: var(--font-size-lg);
-  line-height: 1.7;
-  max-width: 36rem;
-  margin: 0 auto;
-  opacity: 0.9;
+    font-size: var(--font-size-lg);
+    line-height: 1.7;
+    margin-bottom: var(--spacing-2xl);
+    color: var(--color-text-secondary);
 }
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
-  .container {
-    padding: var(--spacing-sm);
-  }
-  
-  .title {
-    font-size: var(--font-size-2xl);
-  }
-  
-  .description {
-    font-size: var(--font-size-base);
-  }
+    .container {
+        padding: var(--spacing-sm);
+    }
+
+    .content {
+        padding: 0 var(--spacing-lg); /* Increased side padding on mobile */
+    }
+
+    .title {
+        font-size: var(--font-size-2xl);
+    }
+
+    .description {
+        font-size: var(--font-size-base);
+    }
 }
