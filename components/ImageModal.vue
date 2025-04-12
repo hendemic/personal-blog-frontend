@@ -33,10 +33,14 @@
       @touchend="handleTouchEnd"
     >
       <div class="image-container">
-        <img
-          :src="image.url"
+        <nuxt-img
+          :src="getImageUrl(image)"
           :alt="image.alternativeText || ''"
           class="modal-image"
+          sizes="xl:2000px lg:1600px md:1024px sm:600px"
+          format="webp"
+          loading="eager"
+          quality="90"
         />
         <div v-if="caption" class="modal-caption">{{ caption }}</div>
       </div>
@@ -51,6 +55,33 @@
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue'
+
+// Helper function to get optimal image URL based on format size
+function getImageUrl(image, size = 'original') {
+  if (!image) return ''
+  
+  // If formats are available, use them (formats is a JSON field in Strapi)
+  if (image.formats) {
+    const formats = typeof image.formats === 'string' 
+      ? JSON.parse(image.formats) 
+      : image.formats
+      
+    if (size === 'thumbnail' && formats.thumbnail) {
+      return formats.thumbnail.url
+    } else if (size === 'small' && formats.small) {
+      return formats.small.url
+    } else if (size === 'medium' && formats.medium) {
+      return formats.medium.url
+    } else if (size === 'large' && formats.large) {
+      return formats.large.url
+    }
+    // Default to original for modal view
+    return image.url
+  }
+  
+  // Fallback to original URL if format not available
+  return image.url
+}
 
 const isOpen = ref(false)
 const image = ref(null)

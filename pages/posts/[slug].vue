@@ -78,6 +78,7 @@ onMounted(async () => {
                 width
                 height
                 alternativeText
+                formats
               }
             }
             ... on ComponentContentBlockMediaGrid {
@@ -89,6 +90,7 @@ onMounted(async () => {
                   width
                   height
                   alternativeText
+                  formats
                 }
               }
             }
