@@ -49,14 +49,10 @@ onMounted(() => {
 
 <style scoped>
 .theme-toggle {
-  position: fixed;
-  top: 20px;
-  right: 20px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 100;
   background: none;
   border: none;
   padding: 0;

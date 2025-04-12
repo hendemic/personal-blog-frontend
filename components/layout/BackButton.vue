@@ -46,13 +46,9 @@ onMounted(() => {
 
 <style scoped>
 .back-button {
-  position: fixed;
-  top: 20px;
-  left: 20px;
   font-size: 1rem;
   color: var(--color-text-primary);
   text-decoration: none;
-  z-index: 100;
   /* This ensures the SVG inherits the color */
   fill: var(--color-text-primary);
 }

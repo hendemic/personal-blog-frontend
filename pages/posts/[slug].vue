@@ -167,6 +167,7 @@ onMounted(async () => {
   font-size: var(--font-size-3xl);
   font-weight: var(--font-weight-bold);
   line-height: 1.2;
+  margin-top: 0; /* Reset the top margin from global styles */
 }
 
 .error {
@@ -176,7 +177,7 @@ onMounted(async () => {
 
 @media (max-width: 768px) {
   .post-title {
-    font-size: var(--font-size-2xl);
+    font-size: calc(var(--font-size-3xl) * var(--mobile-scale-ratio));
   }
 }
 </style>

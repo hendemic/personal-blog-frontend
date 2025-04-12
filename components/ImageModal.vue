@@ -5,14 +5,14 @@
     </button>
     
     <div class="modal-content" @click.stop>
-      <img 
-        :src="image.url" 
-        :alt="image.alternativeText || ''" 
-        :width="image.width" 
-        :height="image.height"
-        class="modal-image"
-      />
-      <div v-if="caption" class="modal-caption">{{ caption }}</div>
+      <div class="image-container">
+        <img 
+          :src="image.url" 
+          :alt="image.alternativeText || ''" 
+          class="modal-image"
+        />
+        <div v-if="caption" class="modal-caption">{{ caption }}</div>
+      </div>
     </div>
   </div>
 </template>
@@ -56,28 +56,45 @@ defineExpose({
   justify-content: center;
   z-index: 1000;
   cursor: pointer;
+  box-sizing: border-box;
+  overflow-y: auto; /* Allow scrolling if content is tall */
 }
 
 .modal-content {
+  margin: auto;
+  text-align: center;
+  padding: 40px 20px 70px; /* Extra padding at bottom for captions */
+  max-height: 100vh;
   max-width: 90vw;
-  max-height: 90vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  overflow: visible;
+}
+
+.image-container {
+  position: relative; /* For absolute positioning of caption */
+  display: inline-block; /* Ensure it's only as big as needed */
 }
 
 .modal-image {
   max-width: 100%;
-  max-height: 85vh;
+  max-height: 75vh;
+  width: auto;
+  height: auto;
   object-fit: contain;
+  display: block;
 }
 
 .modal-caption {
+  position: absolute;
+  bottom: -30px; /* Position below the image */
+  left: 0;
+  right: 0;
   color: white;
-  margin-top: var(--spacing-md);
   font-size: var(--font-size-sm);
-  text-align: center;
-  max-width: 80%;
+  text-align: left; /* Left align text */
+  padding: 5px 10px; /* More padding on left/right */
+  background-color: rgba(0, 0, 0, 0.8); /* 80% opacity */
+  border-radius: 4px;
+  opacity: 0.8; /* 80% opacity for the text */
 }
 
 .close-button {

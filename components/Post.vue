@@ -57,6 +57,12 @@ const formattedDate = computed(() => {
     color: var(--color-primary);
 }
 
+.post .grid-sidebar {
+    display: flex;
+    align-items: flex-start;
+    padding-top: 0.2em; /* Fine-tuned alignment with the title */
+}
+
 .post-date {
     font-size: var(--font-size-sm);
     color: var(--color-text-secondary);
@@ -66,6 +72,7 @@ const formattedDate = computed(() => {
 .post-title {
     font-size: var(--font-size-xl);
     font-weight: var(--font-weight-bold);
+    margin-top: 0; /* Reset the top margin from global styles */
     margin-bottom: var(--spacing-xs);
 }
 

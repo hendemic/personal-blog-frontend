@@ -5,6 +5,7 @@ export default defineNuxtConfig({
   
   css: [
     '~/assets/css/theme.css',
+    '~/assets/css/typography.css',
     '~/assets/css/layout.css'
   ],
   
