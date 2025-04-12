@@ -43,8 +43,9 @@
           preload
           :placeholder="[200, 150, 25, 15]"
           class="modal-image"
+          @load="imageLoaded = true"
         />
-        <div v-if="caption" class="modal-caption">{{ caption }}</div>
+        <div v-if="caption && imageLoaded" class="modal-caption">{{ caption }}</div>
       </div>
     </div>
 
@@ -64,6 +65,7 @@ const image = ref(null)
 const caption = ref(null)
 const carouselImages = ref([])
 const currentImageIndex = ref(0)
+const imageLoaded = ref(false)
 
 // Determine if we're in carousel mode
 const hasCarouselImages = computed(() => {
@@ -91,6 +93,7 @@ function open(imageData, captionText) {
   // Start with null image to force placeholder
   image.value = null
   caption.value = captionText
+  imageLoaded.value = false
   
   // Save the current scroll position
   savedScrollPosition = window.scrollY
@@ -119,6 +122,7 @@ function openCarousel(images, index, captions) {
   
   // Start with null image to ensure placeholder shows
   image.value = null
+  imageLoaded.value = false
 
   // Save the current scroll position
   savedScrollPosition = window.scrollY
@@ -148,6 +152,7 @@ function showNextImage() {
   
   // Force re-rendering by setting to null first (like in carousel)
   image.value = null
+  imageLoaded.value = false
   
   // Then set new image - this ensures the placeholder shows
   nextTick(() => {
@@ -165,6 +170,7 @@ function showPrevImage() {
   
   // Force re-rendering by setting to null first (like in carousel)
   image.value = null
+  imageLoaded.value = false
   
   // Then set new image - this ensures the placeholder shows
   nextTick(() => {

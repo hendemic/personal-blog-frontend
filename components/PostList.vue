@@ -37,11 +37,15 @@ onMounted(async () => {
       body: JSON.stringify({
         query: `
           query {
-            posts {
+            posts(
+              filters: { visible: { eq: true } },
+              sort: "publishDate:desc"
+            ) {
               title
               description
               publishDate
               slug
+              visible
             }
           }
         `
@@ -51,7 +55,13 @@ onMounted(async () => {
     const result = await response.json()
     
     if (result.data?.posts) {
-      posts.value = result.data.posts
+      // Filter again client-side to handle any posts without the visible field set
+      let filteredPosts = result.data.posts.filter(post => post.visible !== false)
+      
+      // Sort by publishDate (newest first)
+      filteredPosts.sort((a, b) => new Date(b.publishDate) - new Date(a.publishDate))
+      
+      posts.value = filteredPosts
     }
   } catch (err) {
     console.error('Error fetching posts:', err)
