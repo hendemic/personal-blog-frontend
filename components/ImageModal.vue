@@ -78,7 +78,13 @@ function open(imageData, captionText) {
   caption.value = captionText
   carouselImages.value = [] // Clear any previous carousel data
   isOpen.value = true
-  document.body.style.overflow = 'hidden' // Prevent scrolling when modal is open
+  
+  // Prevent scrolling when modal is open
+  document.body.style.overflow = 'hidden'
+  document.body.style.position = 'fixed'
+  document.body.style.width = '100%'
+  document.body.style.top = `-${window.scrollY}px`
+  document.documentElement.style.scrollBehavior = 'auto' // Prevent smooth scrolling when reopening
 }
 
 // Open function for carousel images
@@ -94,7 +100,13 @@ function openCarousel(images, index, captions) {
   caption.value = captions ? captions[currentImageIndex.value] : currentImage.caption
 
   isOpen.value = true
+  
+  // Prevent scrolling when modal is open
   document.body.style.overflow = 'hidden'
+  document.body.style.position = 'fixed'
+  document.body.style.width = '100%'
+  document.body.style.top = `-${window.scrollY}px`
+  document.documentElement.style.scrollBehavior = 'auto'
 }
 
 function showNextImage() {
@@ -117,7 +129,23 @@ function showPrevImage() {
 
 function close() {
   isOpen.value = false
-  document.body.style.overflow = '' // Restore scrolling
+  
+  // Restore scrolling with the previous scroll position
+  const scrollY = document.body.style.top
+  document.body.style.overflow = ''
+  document.body.style.position = ''
+  document.body.style.width = ''
+  document.body.style.top = ''
+  
+  // Restore scroll position
+  if (scrollY) {
+    window.scrollTo(0, parseInt(scrollY || '0', 10) * -1)
+  }
+  
+  // Restore default scroll behavior
+  setTimeout(() => {
+    document.documentElement.style.scrollBehavior = ''
+  }, 100)
 }
 
 // Handle keyboard navigation
@@ -145,19 +173,41 @@ onUnmounted(() => {
 // Touch gesture handling
 let touchStartX = 0
 let touchEndX = 0
+let touchMoved = false
+let touchStartTime = 0
 
 function handleTouchStart(event) {
   if (!hasCarouselImages.value) return
   touchStartX = event.touches[0].clientX
+  touchEndX = touchStartX // Initialize end position
+  touchMoved = false // Reset movement flag
+  touchStartTime = Date.now() // Record start time
 }
 
 function handleTouchMove(event) {
   if (!hasCarouselImages.value) return
+  
+  // Prevent default to stop background scrolling while modal is open
+  event.preventDefault()
+  
   touchEndX = event.touches[0].clientX
+  
+  // Mark as moved if there was significant movement
+  if (Math.abs(touchEndX - touchStartX) > 10) {
+    touchMoved = true
+  }
 }
 
 function handleTouchEnd() {
   if (!hasCarouselImages.value) return
+  
+  // Calculate time of touch
+  const touchDuration = Date.now() - touchStartTime
+  
+  // If it's a quick tap without movement, ignore it
+  if (!touchMoved && touchDuration < 300) {
+    return
+  }
   
   // Determine swipe direction (left or right)
   const swipeThreshold = 100 // Increased minimum distance for a swipe to be registered
@@ -171,6 +221,11 @@ function handleTouchEnd() {
   // This ensures it works well on both large and small devices
   if (Math.abs(swipeDistance) < swipeThreshold && swipePercentage < 15) {
     // Not a significant swipe - ignore
+    return
+  }
+  
+  // Ensure there was actual movement and not just a small value
+  if (touchEndX === touchStartX || !touchMoved) {
     return
   }
   
@@ -333,6 +388,41 @@ defineExpose({
   .nav-icon {
     width: 28px;
     height: 28px;
+  }
+}
+
+/* Landscape orientation optimization */
+@media (orientation: landscape) and (max-height: 600px) {
+  .modal-image {
+    max-height: 70vh; /* Reduce height in landscape mode */
+  }
+  
+  .modal-content {
+    padding: 20px 20px 40px; /* Reduced padding */
+  }
+  
+  .image-counter {
+    bottom: 10px;
+  }
+  
+  .close-button {
+    top: 10px;
+    right: 10px;
+  }
+  
+  .close-icon {
+    width: 36px;
+    height: 36px;
+  }
+  
+  .nav-button {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .nav-icon {
+    width: 30px;
+    height: 30px;
   }
 }
 

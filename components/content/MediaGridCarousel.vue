@@ -73,27 +73,50 @@ function openModal(imageData, captionText) {
 // Touch gesture handling
 let touchStartX = 0
 let touchEndX = 0
+let touchMoved = false
+let touchStartTime = 0
 
 function handleTouchStart(event) {
   touchStartX = event.touches[0].clientX
+  touchEndX = touchStartX // Initialize end position
+  touchMoved = false // Reset movement flag
+  touchStartTime = Date.now() // Record start time
 }
 
 function handleTouchMove(event) {
   touchEndX = event.touches[0].clientX
+  
+  // Mark as moved if there was significant movement
+  if (Math.abs(touchEndX - touchStartX) > 10) {
+    touchMoved = true
+  }
 }
 
 function handleTouchEnd() {
+  // Calculate time of touch
+  const touchDuration = Date.now() - touchStartTime
+  
+  // If it's a quick tap without movement, ignore it
+  if (!touchMoved && touchDuration < 300) {
+    return
+  }
+  
   // Determine swipe direction (left or right)
-  const swipeThreshold = 100 // Increased minimum distance for a swipe to be registered
+  const swipeThreshold = 100 // Minimum distance for a swipe to be registered
   const swipeDistance = touchEndX - touchStartX
   
-  // Calculate swipe as a percentage of screen width for better responsiveness
+  // Calculate swipe as a percentage of screen width
   const screenWidth = window.innerWidth
   const swipePercentage = (Math.abs(swipeDistance) / screenWidth) * 100
   
-  // Require either 100px absolute distance OR 15% of screen width, whichever is smaller
+  // Require either 100px absolute distance OR 15% of screen width
   if (Math.abs(swipeDistance) < swipeThreshold && swipePercentage < 15) {
     // Not a significant swipe - ignore
+    return
+  }
+  
+  // Ensure there was actual movement and not just a small value
+  if (touchEndX === touchStartX || !touchMoved) {
     return
   }
   
