@@ -258,9 +258,9 @@ defineExpose({
   top: 0;
   left: 0;
   right: 0;
-  bottom: 0;
+  bottom: -1px; /* Extend slightly past viewport bottom */
   width: 100%;
-  height: 100%;
+  height: calc(100% + 1px); /* Slightly taller than viewport */
   background-color: rgba(0, 0, 0, 0.97);
   display: flex;
   align-items: center;
@@ -274,14 +274,16 @@ defineExpose({
   overscroll-behavior: none;
   /* Ensure the overlay covers the entire screen including iOS notches and safe areas */
   min-height: 100vh;
+  min-height: 100dvh; /* Dynamic viewport height */
   min-height: -webkit-fill-available;
   margin: 0;
-  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) calc(env(safe-area-inset-bottom) + 1px) env(safe-area-inset-left);
   /* Extend beyond default viewport boundaries */
   width: 100vw;
   max-width: 100vw;
   height: 100vh;
-  max-height: -webkit-fill-available;
+  height: 100dvh; /* Dynamic viewport height */
+  max-height: none; /* Remove constraints */
 }
 
 .modal-content {
@@ -416,18 +418,21 @@ defineExpose({
 @media (orientation: landscape) and (max-height: 600px) {
   .image-modal {
     /* Additional iOS-specific fixes for landscape mode */
-    height: 100vh;
-    height: -webkit-fill-available;
+    height: 100vh; 
+    height: 100dvh; /* Modern dynamic viewport height */
+    min-height: -webkit-fill-available;
     min-height: stretch; /* Modern browsers */
-    max-height: -webkit-fill-available;
-    /* Additional fixes for iOS dynamic island in landscape mode */
-    padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+    max-height: none; /* Override constraints */
+    /* Extend beyond normal boundaries to eliminate gaps */
+    padding: env(safe-area-inset-top) env(safe-area-inset-right) calc(env(safe-area-inset-bottom) + 1px) env(safe-area-inset-left);
     width: 100vw;
-    /* Prevent overlap issues */
+    /* Force overlay to cover entire screen */
+    position: fixed;
     left: 0;
     right: 0;
     top: 0;
-    bottom: 0;
+    bottom: -1px; /* Extend slightly beyond viewport */
+    margin: 0;
   }
   
   .modal-image {
