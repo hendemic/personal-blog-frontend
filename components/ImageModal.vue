@@ -72,6 +72,9 @@ const canGoForward = computed(() => {
   return hasCarouselImages.value && currentImageIndex.value < carouselImages.value.length - 1
 })
 
+// Save the current scroll position
+let savedScrollPosition = 0
+
 // Standard open function (for non-carousel images)
 function open(imageData, captionText) {
   image.value = imageData
@@ -79,11 +82,14 @@ function open(imageData, captionText) {
   carouselImages.value = [] // Clear any previous carousel data
   isOpen.value = true
   
-  // Prevent scrolling when modal is open
+  // Save the current scroll position
+  savedScrollPosition = window.scrollY
+  
+  // Prevent scrolling when modal is open without changing the visual scroll position
   document.body.style.overflow = 'hidden'
   document.body.style.position = 'fixed'
   document.body.style.width = '100%'
-  document.body.style.top = `-${window.scrollY}px`
+  document.body.style.top = `-${savedScrollPosition}px`
   document.documentElement.style.scrollBehavior = 'auto' // Prevent smooth scrolling when reopening
 }
 
@@ -101,11 +107,14 @@ function openCarousel(images, index, captions) {
 
   isOpen.value = true
   
-  // Prevent scrolling when modal is open
+  // Save the current scroll position
+  savedScrollPosition = window.scrollY
+  
+  // Prevent scrolling when modal is open without changing the visual scroll position
   document.body.style.overflow = 'hidden'
   document.body.style.position = 'fixed'
   document.body.style.width = '100%'
-  document.body.style.top = `-${window.scrollY}px`
+  document.body.style.top = `-${savedScrollPosition}px`
   document.documentElement.style.scrollBehavior = 'auto'
 }
 
@@ -130,19 +139,16 @@ function showPrevImage() {
 function close() {
   isOpen.value = false
   
-  // Restore scrolling with the previous scroll position
-  const scrollY = document.body.style.top
+  // Remove all scroll locks
   document.body.style.overflow = ''
   document.body.style.position = ''
   document.body.style.width = ''
   document.body.style.top = ''
   
-  // Restore scroll position
-  if (scrollY) {
-    window.scrollTo(0, parseInt(scrollY || '0', 10) * -1)
-  }
+  // Directly restore to the saved position
+  window.scrollTo(0, savedScrollPosition)
   
-  // Restore default scroll behavior
+  // Restore default scroll behavior after a short delay
   setTimeout(() => {
     document.documentElement.style.scrollBehavior = ''
   }, 100)
@@ -251,6 +257,8 @@ defineExpose({
   position: fixed;
   top: 0;
   left: 0;
+  right: 0;
+  bottom: 0;
   width: 100%;
   height: 100%;
   background-color: rgba(0, 0, 0, 0.9);
@@ -261,6 +269,12 @@ defineExpose({
   cursor: pointer;
   box-sizing: border-box;
   overflow-y: auto; /* Allow scrolling if content is tall */
+  /* Fix for iOS and other mobile browsers */
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: none;
+  /* Ensure the overlay covers the entire screen */
+  min-height: 100vh;
+  min-height: -webkit-fill-available;
 }
 
 .modal-content {
@@ -393,6 +407,14 @@ defineExpose({
 
 /* Landscape orientation optimization */
 @media (orientation: landscape) and (max-height: 600px) {
+  .image-modal {
+    /* Additional iOS-specific fixes for landscape mode */
+    height: 100vh;
+    height: -webkit-fill-available;
+    min-height: stretch; /* Modern browsers */
+    max-height: -webkit-fill-available;
+  }
+  
   .modal-image {
     max-height: 70vh; /* Reduce height in landscape mode */
   }
