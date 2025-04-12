@@ -1,12 +1,12 @@
 <template>
   <figure class="image-block">
-    <nuxt-img 
-      :src="getImageUrl(block.image, 'large')" 
+    <NuxtImg 
+      :src="block.image.url" 
       :alt="block.image?.alternativeText || block.caption || ''" 
-      sizes="xl:2000px lg:1600px md:1024px sm:600px"
       preset="blog"
       loading="lazy"
-      placeholder
+      preload
+      :placeholder="[200, 150, 25, 15]"
       class="image"
       @click="openModal"
     />
@@ -20,30 +20,7 @@
 import { ref } from 'vue'
 import ImageModal from '~/components/ImageModal.vue'
 
-// Helper function to get optimal image URL based on format size
-function getImageUrl(image, size = 'large') {
-  if (!image) return ''
-  
-  // If formats are available, use them (formats is a JSON field in Strapi)
-  if (image.formats) {
-    const formats = typeof image.formats === 'string' 
-      ? JSON.parse(image.formats) 
-      : image.formats
-      
-    if (size === 'thumbnail' && formats.thumbnail) {
-      return formats.thumbnail.url
-    } else if (size === 'small' && formats.small) {
-      return formats.small.url
-    } else if (size === 'medium' && formats.medium) {
-      return formats.medium.url
-    } else if (size === 'large' && formats.large) {
-      return formats.large.url
-    }
-  }
-  
-  // Fallback to original URL if format not available
-  return image.url
-}
+// We don't need this helper anymore since we're letting NuxtImg handle the image processing
 
 const props = defineProps({
   block: {

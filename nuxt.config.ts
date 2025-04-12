@@ -32,7 +32,8 @@ export default defineNuxtConfig({
   
   // Register client-side plugins
   plugins: [
-    '~/plugins/theme.client.js'
+    '~/plugins/theme.client.js',
+    '~/plugins/image-debug.client.js'
   ],
   
   // Add image module
@@ -42,11 +43,8 @@ export default defineNuxtConfig({
   
   // Configure image module
   image: {
-    // Configure Strapi provider
-    provider: 'strapi',
-    strapi: {
-      baseURL: process.env.NUXT_PUBLIC_API_URL || 'http://localhost:1337'
-    },
+    // Use the ipx provider (supports remote URLs)
+    provider: 'ipx',
     
     // Configure quality
     quality: 85,
@@ -67,26 +65,47 @@ export default defineNuxtConfig({
     
     // Add support for Digital Ocean Spaces CDN
     domains: [
-      process.env.DO_SPACE_BASE_URL
+      'nyc3.digitaloceanspaces.com',
+      'mrh-strapi-blog.nyc3.cdn.digitaloceanspaces.com'
     ],
     
-    // Improved loading experience
+    // Improved loading experience with simpler presets
     presets: {
-      blog: {
+      modal: {
+        modifiers: {
+          format: 'webp',
+          quality: 95,
+          width: 2000
+        }
+      },
+      carousel: {
         modifiers: {
           format: 'webp',
           quality: 90,
-          blur: 10
+          width: 1200
         }
       },
       thumbnail: {
         modifiers: {
           format: 'webp',
+          quality: 90,
+          width: 150,
+          height: 150
+        }
+      },
+      blog: {
+        modifiers: {
+          format: 'webp',
           quality: 85,
-          width: 400,
-          height: 400
+          width: 1200
         }
       }
+    },
+    
+    // Enable built-in placeholder generation
+    // This creates a low-res blurred version during loading
+    placeholder: {
+      quality: 30
     }
   }
 })

@@ -33,14 +33,16 @@
       @touchend="handleTouchEnd"
     >
       <div class="image-container">
-        <nuxt-img
-          :src="getImageUrl(image)"
-          :alt="image.alternativeText || ''"
-          class="modal-image"
-          sizes="xl:2000px lg:1600px md:1024px sm:600px"
-          format="webp"
+        <!-- Simply use NuxtImg with placeholder and preload -->
+        <NuxtImg 
+          v-if="image"
+          :src="image?.url"
+          :alt="image?.alternativeText || ''"
+          preset="modal"
           loading="eager"
-          quality="90"
+          preload
+          :placeholder="[200, 150, 25, 15]"
+          class="modal-image"
         />
         <div v-if="caption" class="modal-caption">{{ caption }}</div>
       </div>
@@ -54,34 +56,8 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue'
-
-// Helper function to get optimal image URL based on format size
-function getImageUrl(image, size = 'original') {
-  if (!image) return ''
-  
-  // If formats are available, use them (formats is a JSON field in Strapi)
-  if (image.formats) {
-    const formats = typeof image.formats === 'string' 
-      ? JSON.parse(image.formats) 
-      : image.formats
-      
-    if (size === 'thumbnail' && formats.thumbnail) {
-      return formats.thumbnail.url
-    } else if (size === 'small' && formats.small) {
-      return formats.small.url
-    } else if (size === 'medium' && formats.medium) {
-      return formats.medium.url
-    } else if (size === 'large' && formats.large) {
-      return formats.large.url
-    }
-    // Default to original for modal view
-    return image.url
-  }
-  
-  // Fallback to original URL if format not available
-  return image.url
-}
+import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue'
+const img = useImage()
 
 const isOpen = ref(false)
 const image = ref(null)
@@ -108,10 +84,13 @@ let savedScrollPosition = 0
 
 // Standard open function (for non-carousel images)
 function open(imageData, captionText) {
+  // Set modal to open
+  isOpen.value = true
+  carouselImages.value = [] // Clear any previous carousel data
+  
+  // Set image and caption directly
   image.value = imageData
   caption.value = captionText
-  carouselImages.value = [] // Clear any previous carousel data
-  isOpen.value = true
   
   // Save the current scroll position
   savedScrollPosition = window.scrollY
@@ -128,16 +107,11 @@ function open(imageData, captionText) {
 function openCarousel(images, index, captions) {
   if (!images || !images.length) return
 
+  // Open modal
+  isOpen.value = true
   carouselImages.value = images
   currentImageIndex.value = index || 0
 
-  // Set the current image and caption
-  const currentImage = carouselImages.value[currentImageIndex.value]
-  image.value = currentImage.image
-  caption.value = captions ? captions[currentImageIndex.value] : currentImage.caption
-
-  isOpen.value = true
-  
   // Save the current scroll position
   savedScrollPosition = window.scrollY
   
@@ -147,12 +121,24 @@ function openCarousel(images, index, captions) {
   document.body.style.width = '100%'
   document.body.style.top = `-${savedScrollPosition}px`
   document.documentElement.style.scrollBehavior = 'auto'
+  
+  // Set the current image and caption directly
+  const currentImage = carouselImages.value[currentImageIndex.value]
+  image.value = currentImage.image
+  caption.value = captions ? captions[currentImageIndex.value] : currentImage.caption
+  
+  // NuxtImg will handle preloading with the preload prop
 }
+
+// We'll use NuxtImg's preload prop instead of manual preloading
 
 function showNextImage() {
   if (!canGoForward.value) return
-
+  
+  // Update index immediately 
   currentImageIndex.value++
+  
+  // Set new image directly - NuxtImg will show placeholder until loaded
   const currentImage = carouselImages.value[currentImageIndex.value]
   image.value = currentImage.image
   caption.value = currentImage.caption
@@ -160,8 +146,11 @@ function showNextImage() {
 
 function showPrevImage() {
   if (!canGoBack.value) return
-
+  
+  // Update index immediately
   currentImageIndex.value--
+  
+  // Set new image directly - NuxtImg will show placeholder until loaded
   const currentImage = carouselImages.value[currentImageIndex.value]
   image.value = currentImage.image
   caption.value = currentImage.caption
@@ -330,6 +319,8 @@ defineExpose({
   position: relative; /* For absolute positioning of caption */
   display: inline-block; /* Ensure it's only as big as needed */
 }
+
+
 
 .modal-image {
   max-width: 100%;

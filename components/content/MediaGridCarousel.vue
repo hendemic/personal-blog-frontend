@@ -8,17 +8,38 @@
       @touchend="handleTouchEnd"
     >
       <div v-if="images.length > 0" class="active-image-container">
-        <nuxt-img 
-          :src="getImageUrl(images[activeIndex].image, 'large')" 
-          :alt="images[activeIndex].caption || ''" 
+        <!-- Use NuxtImg with array syntax for placeholder -->
+        <NuxtImg 
+          :src="images[activeIndex].image.url"
+          :alt="images[activeIndex].caption || ''"
+          preset="carousel"
+          loading="eager"
+          preload
+          :placeholder="[100, 60, 30, 15]"
+          :key="activeIndex"
           class="active-image"
-          sizes="xl:2000px lg:1600px md:1024px sm:600px"
-          preset="blog"
-          loading="lazy"
-          placeholder
           @click="openModal(images[activeIndex].image, images[activeIndex].caption)"
         />
-        <!-- Caption is hidden in carousel but passed to modal -->
+
+        <!-- Also preload previous and next images for instant switching -->
+        <NuxtImg 
+          v-if="prevImageUrl"
+          :src="prevImageUrl"
+          preset="carousel"
+          width="1"
+          height="1"
+          class="preload-image"
+          preload
+        />
+        <NuxtImg 
+          v-if="nextImageUrl"
+          :src="nextImageUrl"
+          preset="carousel"
+          width="1"
+          height="1" 
+          class="preload-image"
+          preload
+        />
       </div>
     </div>
     
@@ -30,12 +51,14 @@
         :class="{ 'active': index === activeIndex }"
         @click="setActiveImage(index)"
       >
-        <nuxt-img 
-          :src="getImageUrl(image.image, 'small')"
-          :alt="image.caption || ''" 
-          class="thumbnail-image"
+        <!-- Use NuxtImg for thumbnails with array placeholder -->
+        <NuxtImg 
+          :src="image.image.url"
+          :alt="image.caption || ''"
           preset="thumbnail"
           loading="lazy"
+          :placeholder="[50, 50, 40, 8]"
+          class="thumbnail-image"
         />
       </div>
     </div>
@@ -45,33 +68,9 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
 import ImageModal from '~/components/ImageModal.vue'
-
-// Helper function to get optimal image URL based on format size
-function getImageUrl(image, size = 'large') {
-  if (!image) return ''
-  
-  // If formats are available, use them (formats is a JSON field in Strapi)
-  if (image.formats) {
-    const formats = typeof image.formats === 'string' 
-      ? JSON.parse(image.formats) 
-      : image.formats
-      
-    if (size === 'thumbnail' && formats.thumbnail) {
-      return formats.thumbnail.url
-    } else if (size === 'small' && formats.small) {
-      return formats.small.url
-    } else if (size === 'medium' && formats.medium) {
-      return formats.medium.url
-    } else if (size === 'large' && formats.large) {
-      return formats.large.url
-    }
-  }
-  
-  // Fallback to original URL if format not available
-  return image.url
-}
+const img = useImage()
 
 const props = defineProps({
   block: {
@@ -84,11 +83,39 @@ const activeIndex = ref(0)
 const imageModal = ref(null)
 
 const images = computed(() => {
-  return props.block.images || []
+  const imagesList = props.block.images || []
+  
+  // Debug ALL image formats in console
+  if (typeof window !== 'undefined' && window.debugImageFormats && imagesList.length > 0) {
+    console.log('DEBUG: All image formats and URLS:')
+    imagesList.forEach((img, idx) => {
+      console.log(`Image ${idx}:`, {
+        url: img.image.url,
+        formats: img.image.formats
+      })
+    })
+  }
+  
+  return imagesList
 })
 
 // No size classes needed anymore as flex layout will auto-adjust
 const sizeClass = computed(() => '')
+
+// We no longer need manual preloading as we're using the NuxtImg preload prop
+// The computed properties below will identify which images to preload
+
+// Compute previous image URL for preloading (if available)
+const prevImageUrl = computed(() => {
+  if (!images.value || images.value.length <= 1 || activeIndex.value <= 0) return null
+  return images.value[activeIndex.value - 1].image.url
+})
+
+// Compute next image URL for preloading (if available)
+const nextImageUrl = computed(() => {
+  if (!images.value || images.value.length <= 1 || activeIndex.value >= images.value.length - 1) return null
+  return images.value[activeIndex.value + 1].image.url
+})
 
 function setActiveImage(index) {
   activeIndex.value = index
@@ -204,6 +231,16 @@ function handleTouchEnd() {
 .active-image:hover {
   opacity: 0.9;
 }
+
+.preload-image {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
 
 .caption {
   margin-top: var(--spacing-sm);
