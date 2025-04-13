@@ -75,7 +75,7 @@ export default defineNuxtConfig({
         modifiers: {
           format: 'jpeg',
           quality: 90,
-          width: 1600
+          width: 1800
         }
       },
       carousel: {
