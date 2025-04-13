@@ -6,7 +6,6 @@
       preset="blog"
       loading="lazy"
       preload
-      :placeholder="[200, 150, 25, 15]"
       class="image"
       @click="openModal"
     />

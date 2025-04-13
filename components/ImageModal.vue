@@ -41,7 +41,6 @@
           preset="modal"
           loading="eager"
           preload
-          :placeholder="[200, 150, 25, 15]"
           class="modal-image"
           @load="imageLoaded = true"
         />

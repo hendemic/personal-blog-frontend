@@ -8,14 +8,13 @@
       @touchend="handleTouchEnd"
     >
       <div v-if="images.length > 0" class="active-image-container">
-        <!-- Use NuxtImg with array syntax for placeholder -->
+        <!-- Main carousel image -->
         <NuxtImg 
           :src="images[activeIndex].image.url"
           :alt="images[activeIndex].image.alternativeText || images[activeIndex].caption || ''"
           preset="carousel"
           loading="eager"
           preload
-          :placeholder="[100, 60, 30, 15]"
           :key="activeIndex"
           class="active-image"
           @click="openModal(images[activeIndex].image, images[activeIndex].caption)"
@@ -51,13 +50,12 @@
         :class="{ 'active': index === activeIndex }"
         @click="setActiveImage(index)"
       >
-        <!-- Use NuxtImg for thumbnails with array placeholder -->
+        <!-- Thumbnail image -->
         <NuxtImg 
           :src="image.image.url"
           :alt="image.caption || ''"
           preset="thumbnail"
           loading="lazy"
-          :placeholder="[50, 50, 40, 8]"
           class="thumbnail-image"
         />
       </div>

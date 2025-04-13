@@ -102,10 +102,7 @@ export default defineNuxtConfig({
       }
     },
     
-    // Enable built-in placeholder generation
-    // This creates a low-res blurred version during loading
-    placeholder: {
-      quality: 30
-    }
+    // Placeholder disabled - images will load directly without a low-res version
+    placeholder: false
   }
 })
