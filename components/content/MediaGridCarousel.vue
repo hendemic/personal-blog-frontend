@@ -1,7 +1,7 @@
 <template>
   <div class="carousel-container">
     <!-- Use CSS-only approach by removing Vue class binding -->
-    <div 
+    <div
       class="carousel-main"
       @touchstart="handleTouchStart"
       @touchmove="handleTouchMove"
@@ -9,7 +9,7 @@
     >
       <div v-if="images.length > 0" class="active-image-container">
         <!-- Main carousel image -->
-        <NuxtImg 
+        <NuxtImg
           :src="images[activeIndex].image.url"
           :alt="images[activeIndex].image.alternativeText || images[activeIndex].caption || ''"
           preset="carousel"
@@ -19,39 +19,34 @@
           class="active-image"
           @click="openModal(images[activeIndex].image, images[activeIndex].caption)"
         />
-
         <!-- Also preload previous and next images for instant switching -->
-        <NuxtImg 
+        <NuxtImg
           v-if="prevImageUrl"
           :src="prevImageUrl"
           preset="carousel"
-          width="1"
-          height="1"
           class="preload-image"
           preload
         />
-        <NuxtImg 
+        <NuxtImg
           v-if="nextImageUrl"
           :src="nextImageUrl"
           preset="carousel"
-          width="1"
-          height="1" 
           class="preload-image"
           preload
         />
       </div>
     </div>
-    
+
     <div class="thumbnails-container" :class="sizeClass">
-      <div 
-        v-for="(image, index) in images" 
+      <div
+        v-for="(image, index) in images"
         :key="index"
-        class="thumbnail" 
+        class="thumbnail"
         :class="{ 'active': index === activeIndex }"
         @click="setActiveImage(index)"
       >
         <!-- Thumbnail image -->
-        <NuxtImg 
+        <NuxtImg
           :src="image.image.url"
           :alt="image.caption || ''"
           preset="thumbnail"
@@ -60,7 +55,7 @@
         />
       </div>
     </div>
-    
+
     <ImageModal ref="imageModal" />
   </div>
 </template>
@@ -82,7 +77,7 @@ const imageModal = ref(null)
 
 const images = computed(() => {
   const imagesList = props.block.images || []
-  
+
   // Debug ALL image formats in console
   if (typeof window !== 'undefined' && window.debugImageFormats && imagesList.length > 0) {
     console.log('DEBUG: All image formats and URLS:')
@@ -95,7 +90,7 @@ const images = computed(() => {
       })
     })
   }
-  
+
   return imagesList
 })
 
@@ -143,7 +138,7 @@ function handleTouchStart(event) {
 
 function handleTouchMove(event) {
   touchEndX = event.touches[0].clientX
-  
+
   // Mark as moved if there was significant movement
   if (Math.abs(touchEndX - touchStartX) > 10) {
     touchMoved = true
@@ -153,31 +148,31 @@ function handleTouchMove(event) {
 function handleTouchEnd() {
   // Calculate time of touch
   const touchDuration = Date.now() - touchStartTime
-  
+
   // If it's a quick tap without movement, ignore it
   if (!touchMoved && touchDuration < 300) {
     return
   }
-  
+
   // Determine swipe direction (left or right)
   const swipeThreshold = 100 // Minimum distance for a swipe to be registered
   const swipeDistance = touchEndX - touchStartX
-  
+
   // Calculate swipe as a percentage of screen width
   const screenWidth = window.innerWidth
   const swipePercentage = (Math.abs(swipeDistance) / screenWidth) * 100
-  
+
   // Require either 100px absolute distance OR 15% of screen width
   if (Math.abs(swipeDistance) < swipeThreshold && swipePercentage < 15) {
     // Not a significant swipe - ignore
     return
   }
-  
+
   // Ensure there was actual movement and not just a small value
   if (touchEndX === touchStartX || !touchMoved) {
     return
   }
-  
+
   if (swipeDistance > 0) {
     // Swiped right - go to previous image
     if (activeIndex.value > 0) {
@@ -226,7 +221,7 @@ function handleTouchEnd() {
   object-fit: contain;
   cursor: pointer;
   transition: opacity 0.2s;
-  
+
   /* Prevent alt text from showing while placeholder is visible */
   color: transparent !important;
 }
@@ -277,7 +272,7 @@ function handleTouchEnd() {
   height: 100%;
   object-fit: cover;
   transition: all 0.2s ease;
-  
+
   /* Prevent alt text from showing while placeholder is visible */
   color: transparent !important;
 }

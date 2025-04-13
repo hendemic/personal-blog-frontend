@@ -33,7 +33,7 @@
       @touchend="handleTouchEnd"
     >
       <div class="image-container">
-        <!-- Simply use NuxtImg with placeholder and preload -->
+        <!-- Main image with preload -->
         <NuxtImg 
           v-if="image"
           :src="image?.url"
@@ -44,6 +44,23 @@
           class="modal-image"
           @load="imageLoaded = true"
         />
+        
+        <!-- Preload previous and next images for instant switching -->
+        <NuxtImg 
+          v-if="prevImageUrl"
+          :src="prevImageUrl"
+          preset="modal"
+          class="preload-image"
+          preload
+        />
+        <NuxtImg 
+          v-if="nextImageUrl"
+          :src="nextImageUrl"
+          preset="modal"
+          class="preload-image"
+          preload
+        />
+        
         <div v-if="caption && imageLoaded" class="modal-caption">{{ caption }}</div>
       </div>
     </div>
@@ -78,6 +95,18 @@ const canGoBack = computed(() => {
 
 const canGoForward = computed(() => {
   return hasCarouselImages.value && currentImageIndex.value < carouselImages.value.length - 1
+})
+
+// Compute previous image URL for preloading (if available)
+const prevImageUrl = computed(() => {
+  if (!hasCarouselImages.value || !canGoBack.value) return null
+  return carouselImages.value[currentImageIndex.value - 1].image.url
+})
+
+// Compute next image URL for preloading (if available)
+const nextImageUrl = computed(() => {
+  if (!hasCarouselImages.value || !canGoForward.value) return null
+  return carouselImages.value[currentImageIndex.value + 1].image.url
 })
 
 // Save the current scroll position
@@ -352,6 +381,15 @@ defineExpose({
   height: auto;
   object-fit: contain;
   display: block;
+}
+
+.preload-image {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+  overflow: hidden;
 }
 
 .modal-caption {
