@@ -103,11 +103,17 @@ p {
 /* Links */
 a {
     color: var(--color-primary);
-    text-decoration: none;
+    text-decoration: underline;
+    font-weight: bold;
 }
 
 a:hover {
-    text-decoration: underline;
+    opacity: 0.9;
+}
+
+a:visited {
+    /* Keep the same color as non-visited links */
+    color: var(--color-primary);
 }
 
 /* Lists */

@@ -45,6 +45,7 @@ const formattedDate = computed(() => {
     display: block;
     color: inherit;
     text-decoration: none;
+    font-weight: normal; /* Override the global bold style */
     transition: transform 0.3s ease;
     padding-left: 0;
 }
@@ -80,12 +81,18 @@ const formattedDate = computed(() => {
     font-size: var(--font-size-base);
     line-height: 1.6;
     color: var(--color-text-secondary);
+    font-weight: var(--font-weight-normal); /* Ensure normal weight */
 }
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
     .post-date {
         margin-bottom: var(--spacing-xs);
+    }
+    
+    /* Disable hover effects on mobile */
+    .post-link:hover {
+        transform: none; /* Remove the x-movement effect */
     }
 }
 </style>

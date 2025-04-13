@@ -12,6 +12,13 @@ const props = defineProps({
   }
 })
 
+// Function to convert markdown links to HTML links
+const convertMarkdownLinks = (text) => {
+  // Pattern for markdown links: [text](url)
+  const linkPattern = /\[([^\]]+)\]\(([^)]+)\)/g
+  return text.replace(linkPattern, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>')
+}
+
 // Process the text to convert line breaks to paragraphs and handle lists
 const formattedText = computed(() => {
   if (!props.block.text) return ''
@@ -30,6 +37,9 @@ const formattedText = computed(() => {
   
   // Process each section (paragraph or potential list)
   sections.forEach(section => {
+    // Convert markdown links to HTML links first
+    section = convertMarkdownLinks(section)
+    
     // Check if this section looks like a list (several lines starting with - or *)
     const lines = section.split('\n')
     const bulletPattern = /^\s*[-*]\s+(.+)$/
@@ -87,14 +97,7 @@ const formattedText = computed(() => {
   margin-bottom: var(--spacing-md);
 }
 
-:deep(a) {
-  color: var(--color-primary);
-  text-decoration: none;
-}
-
-:deep(a:hover) {
-  text-decoration: underline;
-}
+/* Link styles are defined globally in typography.css */
 
 :deep(ul), :deep(ol) {
   padding-left: 1.2rem; /* Minimal indentation for bullets themselves */
