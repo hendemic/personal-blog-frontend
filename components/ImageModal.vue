@@ -60,9 +60,10 @@
           class="preload-image"
           preload
         />
-        
-        <div v-if="caption && imageLoaded" class="modal-caption">{{ caption }}</div>
       </div>
+      
+      <!-- Caption moved outside image container -->
+      <div v-if="caption && imageLoaded" class="modal-caption">{{ caption }}</div>
     </div>
 
     <!-- Image counter when in carousel mode -->
@@ -393,17 +394,13 @@ defineExpose({
 }
 
 .modal-caption {
-  position: absolute;
-  bottom: -30px; /* Position below the image */
-  left: 0;
-  right: 0;
+  position: relative;
+  margin-top: 10px; /* Reduced top spacing */
   color: white;
   font-size: var(--font-size-sm);
-  text-align: left; /* Left align text */
-  padding: 5px 10px; /* More padding on left/right */
-  background-color: rgba(0, 0, 0, 0.8); /* 80% opacity */
-  border-radius: 4px;
-  opacity: 0.8; /* 80% opacity for the text */
+  text-align: left;
+  padding: 0; /* Removed padding */
+  max-width: 100%;
 }
 
 .close-button {

@@ -34,6 +34,15 @@
           class="preload-image"
           preload
         />
+        
+        <!-- Preload the current image in modal size for instant modal display -->
+        <NuxtImg
+          v-if="images[activeIndex]?.image?.url"
+          :src="images[activeIndex].image.url"
+          preset="modal"
+          class="preload-image"
+          preload
+        />
       </div>
     </div>
 
