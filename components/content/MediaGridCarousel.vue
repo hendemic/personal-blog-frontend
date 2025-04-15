@@ -1,41 +1,33 @@
 <template>
   <div class="carousel-container">
-    <!-- Use CSS-only approach by removing Vue class binding -->
     <div
       class="carousel-main"
       @touchstart="handleTouchStart"
       @touchmove="handleTouchMove"
       @touchend="handleTouchEnd"
     >
-      <div v-if="images.length > 0" class="active-image-container">
-        <!-- Main carousel image -->
-        <NuxtImg
-          :src="images[activeIndex].image.url"
-          :alt="images[activeIndex].image.alternativeText || images[activeIndex].caption || ''"
-          preset="carousel"
-          loading="eager"
-          preload
-          :key="activeIndex"
-          class="active-image"
-          @click="openModal(images[activeIndex].image, images[activeIndex].caption)"
-        />
-        <!-- Also preload previous and next images for instant switching -->
-        <NuxtImg
-          v-if="prevImageUrl"
-          :src="prevImageUrl"
-          preset="carousel"
-          class="preload-image"
-          preload
-        />
-        <NuxtImg
-          v-if="nextImageUrl"
-          :src="nextImageUrl"
-          preset="carousel"
-          class="preload-image"
-          preload
-        />
-        
-        <!-- Preload the current image in modal size for instant modal display -->
+      <!-- This wrapper will slide horizontally based on touch/swipe -->
+      <div v-if="images.length > 0" class="images-wrapper" :style="transformStyle">
+        <!-- Create a slide for each image in the carousel -->
+        <div 
+          v-for="(image, idx) in images" 
+          :key="idx" 
+          class="carousel-slide"
+        >
+          <NuxtImg 
+            :src="image.image.url"
+            :alt="image.image.alternativeText || image.caption || ''"
+            preset="carousel"
+            :loading="idx === activeIndex ? 'eager' : 'lazy'"
+            :preload="idx >= activeIndex - 1 && idx <= activeIndex + 1"
+            class="carousel-image"
+            @click="openModal(image.image, image.caption)"
+          />
+        </div>
+      </div>
+      
+      <!-- Hidden preload element for modal display -->
+      <div class="preload-container">
         <NuxtImg
           v-if="images[activeIndex]?.image?.url"
           :src="images[activeIndex].image.url"
@@ -70,8 +62,9 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, onMounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue'
 import ImageModal from '~/components/ImageModal.vue'
+import { useCarouselSwipe } from '~/composables/useCarouselSwipe'
 const img = useImage()
 
 const props = defineProps({
@@ -84,9 +77,10 @@ const props = defineProps({
 const activeIndex = ref(0)
 const imageModal = ref(null)
 
+// Get images from props
 const images = computed(() => {
   const imagesList = props.block.images || []
-
+  
   // Debug ALL image formats in console
   if (typeof window !== 'undefined' && window.debugImageFormats && imagesList.length > 0) {
     console.log('DEBUG: All image formats and URLS:')
@@ -99,15 +93,12 @@ const images = computed(() => {
       })
     })
   }
-
+  
   return imagesList
 })
 
 // No size classes needed anymore as flex layout will auto-adjust
 const sizeClass = computed(() => '')
-
-// We no longer need manual preloading as we're using the NuxtImg preload prop
-// The computed properties below will identify which images to preload
 
 // Compute previous image URL for preloading (if available)
 const prevImageUrl = computed(() => {
@@ -121,77 +112,56 @@ const nextImageUrl = computed(() => {
   return images.value[activeIndex.value + 1].image.url
 })
 
+// Using our reusable carousel swipe composable
+const {
+  transformStyle,
+  isDragging,
+  slideWidth,
+  goToSlide,
+  initSlideWidth,
+  handleTouchStart,
+  handleTouchMove,
+  handleTouchEnd,
+  setupResizeListener,
+  isMobileOS
+} = useCarouselSwipe(activeIndex, images)
+
+// Clean up function for event listeners
+let cleanupResizeListener = null
+
+// Initialize slideWidth and set up resize listener when component mounts
+onMounted(() => {
+  initSlideWidth('.carousel-main')
+  
+  // Set up resize listener and store cleanup function
+  cleanupResizeListener = setupResizeListener('.carousel-main')
+})
+
+// Clean up event listeners when component is unmounted
+onUnmounted(() => {
+  if (cleanupResizeListener) {
+    cleanupResizeListener()
+  }
+})
+
 function setActiveImage(index) {
-  activeIndex.value = index
+  // Both mobile and desktop use the same goToSlide function now
+  // as the transition behavior is handled inside it
+  goToSlide(index)
+  
+  // Ensure the width is properly set in case it wasn't already
+  if (slideWidth.value === 0) {
+    const carousel = document.querySelector('.carousel-main')
+    if (carousel) {
+      slideWidth.value = carousel.offsetWidth
+    }
+  }
 }
 
 function openModal(imageData, captionText) {
   if (imageModal.value) {
     // For carousel images, use the openCarousel function with all images
     imageModal.value.openCarousel(images.value, activeIndex.value)
-  }
-}
-
-// Touch gesture handling
-let touchStartX = 0
-let touchEndX = 0
-let touchMoved = false
-let touchStartTime = 0
-
-function handleTouchStart(event) {
-  touchStartX = event.touches[0].clientX
-  touchEndX = touchStartX // Initialize end position
-  touchMoved = false // Reset movement flag
-  touchStartTime = Date.now() // Record start time
-}
-
-function handleTouchMove(event) {
-  touchEndX = event.touches[0].clientX
-
-  // Mark as moved if there was significant movement
-  if (Math.abs(touchEndX - touchStartX) > 10) {
-    touchMoved = true
-  }
-}
-
-function handleTouchEnd() {
-  // Calculate time of touch
-  const touchDuration = Date.now() - touchStartTime
-
-  // If it's a quick tap without movement, ignore it
-  if (!touchMoved && touchDuration < 300) {
-    return
-  }
-
-  // Determine swipe direction (left or right)
-  const swipeThreshold = 100 // Minimum distance for a swipe to be registered
-  const swipeDistance = touchEndX - touchStartX
-
-  // Calculate swipe as a percentage of screen width
-  const screenWidth = window.innerWidth
-  const swipePercentage = (Math.abs(swipeDistance) / screenWidth) * 100
-
-  // Require either 100px absolute distance OR 15% of screen width
-  if (Math.abs(swipeDistance) < swipeThreshold && swipePercentage < 15) {
-    // Not a significant swipe - ignore
-    return
-  }
-
-  // Ensure there was actual movement and not just a small value
-  if (touchEndX === touchStartX || !touchMoved) {
-    return
-  }
-
-  if (swipeDistance > 0) {
-    // Swiped right - go to previous image
-    if (activeIndex.value > 0) {
-      activeIndex.value--
-    }
-  } else {
-    // Swiped left - go to next image
-    if (activeIndex.value < images.value.length - 1) {
-      activeIndex.value++
-    }
   }
 }
 </script>
@@ -214,17 +184,25 @@ function handleTouchEnd() {
   padding-bottom: 66.67%; /* 3:2 aspect ratio as padding-bottom percentage */
 }
 
-.active-image-container {
+.images-wrapper {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  will-change: transform; /* Hint to browser for GPU acceleration */
 }
 
-.active-image {
+.carousel-slide {
+  flex: 0 0 100%;
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.carousel-image {
   width: 100%;
   height: 100%;
   object-fit: contain;
@@ -235,8 +213,16 @@ function handleTouchEnd() {
   color: transparent !important;
 }
 
-.active-image:hover {
+.carousel-image:hover {
   opacity: 0.9;
+}
+
+.preload-container {
+  position: absolute;
+  overflow: hidden;
+  height: 0;
+  width: 0;
+  opacity: 0;
 }
 
 .preload-image {
@@ -281,7 +267,7 @@ function handleTouchEnd() {
   height: 100%;
   object-fit: cover;
   transition: all 0.2s ease;
-
+  
   /* Prevent alt text from showing while placeholder is visible */
   color: transparent !important;
 }
