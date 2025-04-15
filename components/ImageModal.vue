@@ -52,6 +52,7 @@
                   :src="carouselItem.image.url"
                   :alt="carouselItem.image.alternativeText || carouselItem.caption || ''"
                   preset="modal"
+                  placeholder
                   :loading="idx === currentImageIndex ? 'eager' : 'lazy'"
                   :preload="idx >= currentImageIndex - 1 && idx <= currentImageIndex + 1"
                   class="modal-image"

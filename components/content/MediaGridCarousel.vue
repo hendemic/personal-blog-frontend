@@ -9,12 +9,12 @@
       <!-- This wrapper will slide horizontally based on touch/swipe -->
       <div v-if="images.length > 0" class="images-wrapper" :style="transformStyle">
         <!-- Create a slide for each image in the carousel -->
-        <div 
-          v-for="(image, idx) in images" 
-          :key="idx" 
+        <div
+          v-for="(image, idx) in images"
+          :key="idx"
           class="carousel-slide"
         >
-          <NuxtImg 
+          <NuxtImg
             :src="image.image.url"
             :alt="image.image.alternativeText || image.caption || ''"
             preset="carousel"
@@ -25,9 +25,9 @@
           />
         </div>
       </div>
-      
+
       <!-- Hidden preload element for modal display -->
-      <div class="preload-container">
+      <!-- <div class="preload-container">
         <NuxtImg
           v-if="images[activeIndex]?.image?.url"
           :src="images[activeIndex].image.url"
@@ -35,7 +35,7 @@
           class="preload-image"
           preload
         />
-      </div>
+      </div> -->
     </div>
 
     <div class="thumbnails-container" :class="sizeClass">
@@ -80,7 +80,7 @@ const imageModal = ref(null)
 // Get images from props
 const images = computed(() => {
   const imagesList = props.block.images || []
-  
+
   // Debug ALL image formats in console
   if (typeof window !== 'undefined' && window.debugImageFormats && imagesList.length > 0) {
     console.log('DEBUG: All image formats and URLS:')
@@ -93,7 +93,7 @@ const images = computed(() => {
       })
     })
   }
-  
+
   return imagesList
 })
 
@@ -132,7 +132,7 @@ let cleanupResizeListener = null
 // Initialize slideWidth and set up resize listener when component mounts
 onMounted(() => {
   initSlideWidth('.carousel-main')
-  
+
   // Set up resize listener and store cleanup function
   cleanupResizeListener = setupResizeListener('.carousel-main')
 })
@@ -148,7 +148,7 @@ function setActiveImage(index) {
   // Both mobile and desktop use the same goToSlide function now
   // as the transition behavior is handled inside it
   goToSlide(index)
-  
+
   // Ensure the width is properly set in case it wasn't already
   if (slideWidth.value === 0) {
     const carousel = document.querySelector('.carousel-main')
@@ -267,7 +267,7 @@ function openModal(imageData, captionText) {
   height: 100%;
   object-fit: cover;
   transition: all 0.2s ease;
-  
+
   /* Prevent alt text from showing while placeholder is visible */
   color: transparent !important;
 }

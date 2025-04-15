@@ -103,7 +103,10 @@ export default defineNuxtConfig({
       }
     },
 
-    // Placeholder enabled - images will load directly without a low-res version
-    placeholder: true
+    // Configure placeholders for progressive loading
+    placeholder: {
+      size: 30, // 30% of original size for placeholder
+      quality: 40 // 40% quality for placeholders
+    }
   }
 })
