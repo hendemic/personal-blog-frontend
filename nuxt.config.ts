@@ -75,7 +75,7 @@ export default defineNuxtConfig({
       modal: {
         modifiers: {
           format: 'jpeg',
-          quality: 90,
+          quality: 80,
           width: 1800
         }
       },
@@ -89,9 +89,9 @@ export default defineNuxtConfig({
       thumbnail: {
         modifiers: {
           format: 'webp',
-          quality: 70,
-          width: 200,
-          height: 200
+          quality: 40,
+          width: 150,
+          height: 150
         }
       },
       blog: {
@@ -104,9 +104,7 @@ export default defineNuxtConfig({
     },
 
     // Configure placeholders for progressive loading
-    placeholder: {
-      size: 30, // 30% of original size for placeholder
-      quality: 40 // 40% quality for placeholders
-    }
+    placeholder: false
+
   }
 })

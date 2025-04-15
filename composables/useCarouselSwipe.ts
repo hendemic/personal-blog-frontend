@@ -29,7 +29,7 @@ export function useCarouselSwipe(activeIndex, images) {
     return {
       transform: `translateX(${currentTranslate.value}px)`,
       // Only apply animation transition on mobile OS devices
-      transition: isDragging.value ? 'none' : (isMobileOS.value ? 'transform 0.3s ease-out' : 'none')
+      transition: isDragging.value ? 'none' : (isMobileOS.value ? 'transform 0.25s ease-out' : 'none')
     }
   })
 

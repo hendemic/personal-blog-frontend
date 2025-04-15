@@ -18,7 +18,7 @@
             :src="image.image.url"
             :alt="image.image.alternativeText || image.caption || ''"
             preset="carousel"
-            :loading="idx === activeIndex ? 'eager' : 'lazy'"
+            :loading="idx === activeIndex ? 'lazy' : 'lazy'"
             :preload="idx >= activeIndex - 1 && idx <= activeIndex + 1"
             class="carousel-image"
             @click="openModal(image.image, image.caption)"
@@ -51,7 +51,7 @@
           :src="image.image.url"
           :alt="image.caption || ''"
           preset="thumbnail"
-          loading="lazy"
+          loading="eager"
           class="thumbnail-image"
         />
       </div>

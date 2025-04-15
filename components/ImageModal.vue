@@ -52,7 +52,6 @@
                   :src="carouselItem.image.url"
                   :alt="carouselItem.image.alternativeText || carouselItem.caption || ''"
                   preset="modal"
-                  placeholder
                   :loading="idx === currentImageIndex ? 'eager' : 'lazy'"
                   :preload="idx >= currentImageIndex - 1 && idx <= currentImageIndex + 1"
                   class="modal-image"
@@ -261,7 +260,7 @@ function showNextImage() {
     // Keep transition state only during the slide animation
     setTimeout(() => {
       isTransitioning.value = false
-    }, 300) // Just the slide transition time
+    }, 250) // Consistent timing with other animations
   })
 }
 
@@ -305,7 +304,7 @@ function showPrevImage() {
     // Keep transition state only during the slide animation
     setTimeout(() => {
       isTransitioning.value = false
-    }, 300) // Just the slide transition time
+    }, 250) // Consistent timing with other animations
   })
 }
 
@@ -424,7 +423,7 @@ function handleTouchEnd(event) {
     // Reset the transition state after the slide animation completes
     setTimeout(() => {
       isTransitioning.value = false
-    }, 300) // Just the slide transition time
+    }, 250) // Match slide transition time with caption fade-in
   }
 }
 
@@ -447,6 +446,7 @@ defineExpose({
   height: 100%;
   z-index: 1000;
   cursor: pointer;
+  overscroll-behavior: none; /* Prevent pull-to-refresh and navigation gestures */
 }
 
 /* Full bleed background that extends into all keepout areas */
@@ -478,7 +478,8 @@ defineExpose({
   z-index: 1001;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
-  overscroll-behavior: none;
+  overscroll-behavior: none; /* Prevent any scroll chaining */
+  touch-action: manipulation; /* Enhance tap behavior, prevent double-tap to zoom */
 }
 
 /* iOS devices will have these values overridden by the @supports rule below */
@@ -487,6 +488,9 @@ defineExpose({
   width: 100%;
   height: 100%;
   position: relative;
+  overscroll-behavior: contain; /* Contain overscroll within the modal content */
+  -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+  touch-action: pan-y pinch-zoom; /* Allow vertical scrolling and pinch-zoom */
 }
 
 .images-wrapper {
@@ -499,6 +503,7 @@ defineExpose({
   flex-direction: row;
   will-change: transform;
   z-index: 10; /* Lower than navigation controls */
+  overscroll-behavior: contain; /* Prevent overscroll effects from propagating */
 }
 
 .carousel-slide {
@@ -544,7 +549,7 @@ defineExpose({
 .modal-image {
   max-width: min(calc(100% - 80px), 95vw); /* Space for arrows on sides */
   max-height: 70vh;
-  width: auto;
+  width: 100%; /* Explicit width for Chrome */
   height: auto;
   object-fit: contain;
 }
@@ -571,8 +576,8 @@ defineExpose({
 
 /* Only apply the slow transition when coming back from hidden state */
 .caption-container:not(.hide-caption) {
-  transition: opacity 0.5s ease;
-  transition-delay: 0.2s; /* Small delay after movement stops */
+  transition: opacity 0.3s ease; /* Faster fade-in */
+  transition-delay: 0s; /* No delay - start immediately when swiping stops */
 }
 
 /* Caption styling - for portrait mode initially */
@@ -664,7 +669,7 @@ defineExpose({
   transform: scaleX(-1); /* Mirror the icon horizontally */
 }
 
-/* ----------------- BASE STYLES (MOBILE FIRST) ----------------- */
+/* ----------------- BASE STYLES ----------------- */
 /* Default counter position (centered, for narrow/portrait views) */
 .image-counter {
   position: absolute;
@@ -727,6 +732,7 @@ defineExpose({
   }
 }
 
+
 /* ----------------- MEDIUM SCREENS (SMALL TABLETS, PHONES IN LANDSCAPE) ----------------- */
 @media (min-width: 601px) {
   /* Larger buttons for medium screens */
@@ -756,7 +762,7 @@ defineExpose({
   /* Landscape-style layout on medium width screens */
   .modal-image {
     max-height: 75vh; /* Use almost all available vertical space */
-    max-width: 95vw /* More width for portrait images */
+    max-width: 85vw /* More width for portrait images */
   }
 
   .carousel-slide {
@@ -819,7 +825,10 @@ defineExpose({
   /* Larger images for wide screens with safe margins */
   .modal-image {
     max-height: 90vh; /* Taller images for desktop */
-    max-width: min(calc(100% - 120px), 95vw); /* Allow more width while keeping space for arrows */
+    /* max-width: min(calc(100% - 120px), 95vw); */
+    max-width: 90vw;
+    width: 100vw;
+    object-fit: scale-down;
   }
 
   /* More spacious layout */
