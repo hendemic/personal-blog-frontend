@@ -7,6 +7,16 @@
     padding: 0;
 }
 
+/* Set base font size on html to control rem units */
+html {
+    font-size: 16px;
+    /* Prevent iOS text size adjustment without disabling user zoom */
+    -webkit-text-size-adjust: 100%;
+    -moz-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+}
+
 /* Container layouts */
 .container {
     display: flex;

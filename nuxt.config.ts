@@ -7,7 +7,8 @@ export default defineNuxtConfig({
     head: {
       viewport: 'width=device-width, initial-scale=1, viewport-fit=cover',
       meta: [
-        { name: 'viewport-fit', content: 'cover' }
+        { name: 'viewport-fit', content: 'cover' },
+        { name: 'text-size-adjust', content: '100%' }
       ]
     }
   },

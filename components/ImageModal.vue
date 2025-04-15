@@ -209,7 +209,7 @@ function openCarousel(images, index, captions) {
       // Ensure dragging is true to prevent transition animation when initially positioning
       isDragging.value = true
       setupCarouselDimensions()
-      
+
       // Reset dragging state after a short delay to allow future transitions
       setTimeout(() => {
         isDragging.value = false
@@ -599,7 +599,7 @@ defineExpose({
 .close-button {
   position: absolute;
   top: 20px;
-  right: 20px;
+  right: 4px; /* Match the default right positioning of .next-button */
   background: transparent;
   border: none;
   cursor: pointer;
@@ -712,15 +712,17 @@ defineExpose({
   /* Adjust button positions for iOS safe areas */
   .close-button {
     top: max(20px, env(safe-area-inset-top) + 10px);
-    right: max(20px, env(safe-area-inset-right) + 10px);
+    /* Important: Use the exact same calculation for right padding on close and next buttons */
+    right: max(4px, env(safe-area-inset-right));
   }
 
   .prev-button {
-    left: max(15px, env(safe-area-inset-left) + 5px);
+    left: max(4px, env(safe-area-inset-left));
   }
 
   .next-button {
-    right: max(15px, env(safe-area-inset-right) + 5px);
+    /* Match this exactly with the close button's right value for alignment */
+    right: max(4px, env(safe-area-inset-right));
   }
 }
 
@@ -740,6 +742,11 @@ defineExpose({
     right: 10px;
   }
 
+  /* Ensure close button aligns with next button on non-iOS */
+  .close-button {
+    right: 10px;
+  }
+
   .nav-icon {
     width: 32px;
     height: 32px;
@@ -747,7 +754,7 @@ defineExpose({
 
   /* Landscape-style layout on medium width screens */
   .modal-image {
-    max-height: 82vh; /* Use almost all available vertical space */
+    max-height: 75vh; /* Use almost all available vertical space */
     max-width: 95vw /* More width for portrait images */
   }
 
@@ -795,6 +802,11 @@ defineExpose({
   }
 
   .next-button {
+    right: 15px;
+  }
+
+  /* Maintain alignment between close and next buttons */
+  .close-button {
     right: 15px;
   }
 
