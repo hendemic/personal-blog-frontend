@@ -82,8 +82,8 @@ export default defineNuxtConfig({
       carousel: {
         modifiers: {
           format: 'jpeg',
-          quality: 80,
-          width: 800
+          quality: 70,
+          width: 1200
         }
       },
       thumbnail: {
@@ -98,7 +98,7 @@ export default defineNuxtConfig({
         modifiers: {
           format: 'jpeg',
           quality: 80,
-          width: 800
+          width: 1200
         }
       }
     },
