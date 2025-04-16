@@ -8,11 +8,12 @@ export function useCarouselSwipe(activeIndex, images) {
   const touchMoved = ref(false)
   let touchStartTime = 0
   
-  // Mobile OS detection (iOS, Android)
-  const isMobileOS = ref(false)
+  // Touch-capable device detection (mobile/tablet)
+  const isTouchDevice = ref(false)
   
   // Initialize with SSR-safe detection
   if (typeof window !== 'undefined' && typeof navigator !== 'undefined') {
+    // User agent based detection
     const userAgent = navigator.userAgent || navigator.vendor || window.opera
     
     // iOS detection (iPhone, iPad, iPod)
@@ -21,15 +22,24 @@ export function useCarouselSwipe(activeIndex, images) {
     // Android detection
     const isAndroid = /android/i.test(userAgent)
     
-    isMobileOS.value = isIOS || isAndroid
+    // Generic mobile/tablet detection
+    const isMobileTablet = /Mobi|Tablet|Android|iOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(userAgent)
+    
+    // Feature detection for touch capability
+    const hasTouch = 'ontouchstart' in window || 
+                    navigator.maxTouchPoints > 0 || 
+                    (navigator.msMaxTouchPoints > 0);
+    
+    // Set touch device flag if either detection method suggests a touch-capable device
+    isTouchDevice.value = isIOS || isAndroid || isMobileTablet || hasTouch
   }
 
   // Computed property for the transform style that will animate the sliding
   const transformStyle = computed(() => {
     return {
       transform: `translateX(${currentTranslate.value}px)`,
-      // Only apply animation transition on mobile OS devices
-      transition: isDragging.value ? 'none' : (isMobileOS.value ? 'transform 0.25s ease-out' : 'none')
+      // Only apply animation transition on touch devices
+      transition: isDragging.value ? 'none' : (isTouchDevice.value ? 'transform 0.25s ease-out' : 'none')
     }
   })
 
@@ -70,8 +80,8 @@ export function useCarouselSwipe(activeIndex, images) {
     if (index >= 0 && index < images.value.length) {
       activeIndex.value = index
       
-      // For desktop OS, make the transition instant
-      if (!isMobileOS.value) {
+      // For non-touch devices, make the transition instant
+      if (!isTouchDevice.value) {
         isDragging.value = true
         currentTranslate.value = -index * slideWidth.value
         // Reset dragging state after a short delay
@@ -79,7 +89,7 @@ export function useCarouselSwipe(activeIndex, images) {
           isDragging.value = false
         }, 50)
       } else {
-        // For mobile OS, use smooth transition
+        // For touch devices, use smooth transition
         isDragging.value = false
         
         // Only calculate slideWidth if it's not already set
@@ -249,6 +259,6 @@ export function useCarouselSwipe(activeIndex, images) {
     handleTouchEnd,
     handleResize,
     setupResizeListener,
-    isMobileOS
+    isMobileOS: isTouchDevice // Keep the old name for backward compatibility
   }
 }

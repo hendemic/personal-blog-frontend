@@ -166,7 +166,9 @@ function openModal(imageData, captionText) {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+@import '~/assets/css/_breakpoints';
+
 .carousel-container {
   width: 100%;
   margin: var(--spacing-xl) 0;
@@ -294,7 +296,7 @@ function openModal(imageData, captionText) {
   border-radius: 2px;
 }
 
-@media (max-width: 768px) {
+@include mobile {
   .carousel-main {
     /* Force 4:5 vertical aspect ratio on mobile (taller than wide) */
     aspect-ratio: 4/5;

@@ -39,7 +39,9 @@ const props = defineProps({
 })
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+@import '~/assets/css/_breakpoints';
+
 .post-navigation {
   display: flex;
   justify-content: space-between;
@@ -79,7 +81,7 @@ const props = defineProps({
   width: 120px;
 }
 
-@media (max-width: 768px) {
+@include mobile {
   .post-navigation {
     flex-direction: row;
     gap: var(--spacing-md);

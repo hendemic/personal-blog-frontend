@@ -16,7 +16,7 @@ export default defineNuxtConfig({
   css: [
     '~/assets/css/theme.css',
     '~/assets/css/typography.css',
-    '~/assets/css/layout.css'
+    '~/assets/css/layout.scss'
   ],
 
   runtimeConfig: {
@@ -41,6 +41,8 @@ export default defineNuxtConfig({
   modules: [
     '@nuxt/image'
   ],
+
+  // No global SCSS imports - using explicit imports for simplicity
 
   // Configure image module
   image: {

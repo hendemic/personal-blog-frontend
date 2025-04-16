@@ -1,5 +1,8 @@
 /* Layout styles */
 
+/* Import breakpoint variables and mixins */
+@import './_breakpoints';
+
 /* Basic reset */
 * {
     box-sizing: border-box;
@@ -52,7 +55,7 @@ html {
 }
 
 /* Responsive grid adjustments */
-@media (max-width: 768px) {
+@include mobile {
     .two-column-grid {
         grid-template-columns: 1fr;
         gap: var(--spacing-xs);
@@ -75,7 +78,7 @@ html {
 }
 
 /* Responsive adjustments */
-@media (max-width: 768px) {
+@include mobile {
     .container {
         padding: var(--spacing-sm);
     }

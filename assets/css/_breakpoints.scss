@@ -1,0 +1,36 @@
+/* Media breakpoint variables */
+$breakpoint-sm: 701px;   // Mobile breakpoint (phones)
+$breakpoint-lg: 1024px;  // Desktop breakpoint (tablets and desktops)
+
+/* Media query mixins */
+@mixin mobile {
+  @media (max-width: ($breakpoint-sm - 1)) {
+    @content; // Mobile portrait (up to 600px)
+  }
+}
+
+@mixin tablet {
+  @media (min-width: $breakpoint-sm) and (max-width: ($breakpoint-lg - 1)) {
+    @content; // Tablets and mobile landscape (601px to 1023px)
+  }
+}
+
+@mixin desktop {
+  @media (min-width: $breakpoint-lg) {
+    @content; // Desktops and large tablets (1024px+)
+  }
+}
+
+/* Direction-specific mixins */
+@mixin small-up {
+  @media (min-width: $breakpoint-sm) {
+    @content; // 601px and up (matches existing min-width: 601px)
+  }
+}
+
+/* Helper for custom breakpoints */
+@mixin custom-breakpoint($width) {
+  @media (min-width: $width) {
+    @content;
+  }
+}

@@ -232,13 +232,13 @@ function showNextImage() {
 
   // Update the transform to slide to the new position
   if (slideWidth.value) {
-    // For desktop OS, make the transition instant
+    // For non-touch devices, make the transition instant
     if (!isMobileOS.value) {
       isDragging.value = true
       currentTranslate.value = -currentImageIndex.value * slideWidth.value
       setTimeout(() => { isDragging.value = false }, 50)
     } else {
-      // For mobile OS, use smooth transition
+      // For touch devices, use smooth transition
       currentTranslate.value = -currentImageIndex.value * slideWidth.value
     }
   } else {
@@ -260,6 +260,8 @@ function showNextImage() {
     // Keep transition state only during the slide animation
     setTimeout(() => {
       isTransitioning.value = false
+      // Force image loaded state to true after transition completes
+      imageLoaded.value = true
     }, 250) // Consistent timing with other animations
   })
 }
@@ -276,13 +278,13 @@ function showPrevImage() {
 
   // Update the transform to slide to the new position
   if (slideWidth.value) {
-    // For desktop OS, make the transition instant
+    // For non-touch devices, make the transition instant
     if (!isMobileOS.value) {
       isDragging.value = true
       currentTranslate.value = -currentImageIndex.value * slideWidth.value
       setTimeout(() => { isDragging.value = false }, 50)
     } else {
-      // For mobile OS, use smooth transition
+      // For touch devices, use smooth transition
       currentTranslate.value = -currentImageIndex.value * slideWidth.value
     }
   } else {
@@ -304,6 +306,8 @@ function showPrevImage() {
     // Keep transition state only during the slide animation
     setTimeout(() => {
       isTransitioning.value = false
+      // Force image loaded state to true after transition completes
+      imageLoaded.value = true
     }, 250) // Consistent timing with other animations
   })
 }
@@ -435,7 +439,9 @@ defineExpose({
 })
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+@import '~/assets/css/_breakpoints';
+
 .image-modal-container {
   position: fixed;
   top: 0;
@@ -734,7 +740,7 @@ defineExpose({
 
 
 /* ----------------- MEDIUM SCREENS (SMALL TABLETS, PHONES IN LANDSCAPE) ----------------- */
-@media (min-width: 601px) {
+@include small-up {
   /* Larger buttons for medium screens */
   .nav-button {
     width: 45px;
@@ -797,7 +803,7 @@ defineExpose({
 }
 
 /* ----------------- LARGE SCREENS (DESKTOP, TABLETS) ----------------- */
-@media (min-width: 1024px) {
+@include desktop {
   /* Larger navigation buttons for desktop */
   .nav-button {
     width: 50px;
