@@ -168,7 +168,7 @@ function handleSwipeMove(event) {
 }
 
 function handleSwipeEnd() {
-  const threshold = 150
+  const threshold = 100
   if (swipeDeltaY.value < -threshold) {
     close()
   }
