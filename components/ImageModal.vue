@@ -1,5 +1,8 @@
 <template>
-  <div v-if="isOpen" class="image-modal-container">
+  <div v-if="isOpen" class="image-modal-container"
+       @touchstart="handleSwipeStart"
+       @touchmove="handleSwipeMove"
+       @touchend="handleSwipeEnd">
     <!-- Full bleed background that extends into iOS keepout zones -->
     <div class="image-modal-background"></div>
 
@@ -144,6 +147,35 @@ const nextImageUrl = computed(() => {
   if (!hasCarouselImages.value || !canGoForward.value) return null
   return carouselImages.value[currentImageIndex.value + 1].image.url
 })
+
+// Inline swipe-up to close modal
+const swipeStartY = ref(null)
+const swipeDeltaY = ref(0)
+
+function handleSwipeStart(event) {
+  const touch = event.touches?.[0]
+  if (touch) {
+    swipeStartY.value = touch.clientY
+  }
+}
+
+function handleSwipeMove(event) {
+  if (swipeStartY.value === null) return
+  const touch = event.touches?.[0]
+  if (touch) {
+    swipeDeltaY.value = touch.clientY - swipeStartY.value
+  }
+}
+
+function handleSwipeEnd() {
+  const threshold = 150
+  if (swipeDeltaY.value < -threshold) {
+    close()
+  }
+  // Reset swipe tracking
+  swipeStartY.value = null
+  swipeDeltaY.value = 0
+}
 
 // Save the current scroll position
 let savedScrollPosition = 0
