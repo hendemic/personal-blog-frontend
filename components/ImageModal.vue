@@ -58,7 +58,7 @@
                   :loading="idx === currentImageIndex ? 'eager' : 'eager'"
                   :preload="idx >= currentImageIndex - 1 && idx <= currentImageIndex + 1"
                   class="modal-image"
-                  :placeholder="[carouselItem.image.width, carouselItem.image.height, 75, 5]"
+                  :placeholder="[carouselItem.image.width, carouselItem.image.height, 20, 20]"
                   @load="idx === currentImageIndex && (imageLoaded = true)"
                 />
               </div>
