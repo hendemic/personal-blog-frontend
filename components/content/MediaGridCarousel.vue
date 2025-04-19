@@ -21,6 +21,7 @@
             :loading="idx === activeIndex ? 'lazy' : 'lazy'"
             :preload="idx >= activeIndex - 1 && idx <= activeIndex + 1"
             class="carousel-image"
+            :placeholder="[image.image.width, image.image.height, 75, 5]"
             @click="openModal(image.image, image.caption)"
           />
         </div>

@@ -104,9 +104,5 @@ export default defineNuxtConfig({
         }
       }
     },
-
-    // Configure placeholders for progressive loading
-    placeholder: false
-
   }
 })
