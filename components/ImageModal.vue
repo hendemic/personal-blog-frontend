@@ -170,7 +170,7 @@ function handleSwipeMove(event) {
 
 function handleSwipeEnd() {
   const threshold = 100
-  if (swipeDeltaY.value < -threshold) {
+  if (swipeDeltaY.value < -threshold || swipeDeltaY.value > threshold) {
     close()
   }
   // Reset swipe tracking

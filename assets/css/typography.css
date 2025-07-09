@@ -29,7 +29,7 @@ body {
     font-family: var(--font-family-base);
     font-size: var(--font-size-base);
     font-weight: var(--font-weight-normal);
-    line-height: 1.5;
+    line-height: 1;
     color: var(--color-text-primary);
 }
 
@@ -97,7 +97,8 @@ h6 {
 
 /* Paragraphs */
 p {
-    margin-bottom: var(--spacing-md);
+    margin-bottom: var(--spacing-sm);
+    line-height: 1.65rem;
 }
 
 /* Links */
