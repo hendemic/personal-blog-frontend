@@ -38,8 +38,8 @@ h1,h2,h3,h4,h5,h6 {
     font-family: var(--font-family-heading);
     font-weight: var(--font-weight-bold);
     line-height: 1.0;
-    margin-top: var(--spacing-xl);
-    margin-bottom: var(--spacing-xs); /* Reduced spacing after headings */
+    margin-top: var(--spacing-3xl);
+    margin-bottom: 0; /* Minimal spacing after headings */
     color: var(--color-text-primary);
 }
 

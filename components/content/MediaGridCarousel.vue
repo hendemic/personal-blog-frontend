@@ -39,12 +39,12 @@
       </div> -->
     </div>
 
-    <div class="thumbnails-container" :class="sizeClass">
+    <div class="thumbnails-container" :class="[sizeClass, { 'centered': images.length < 5 }]">
       <div
         v-for="(image, index) in images"
         :key="index"
         class="thumbnail"
-        :class="{ 'active': index === activeIndex }"
+        :class="{ 'active': index === activeIndex, 'capped-size': images.length < 5 }"
         @click="setActiveImage(index)"
       >
         <!-- Thumbnail image -->
@@ -263,6 +263,16 @@ function openModal(imageData, captionText) {
   aspect-ratio: 1/1;
   transition: all 0.2s ease;
   min-width: 0; /* Allow flex items to shrink below content size */
+}
+
+/* Cap the size to what 6 images would look like, but only for <5 images */
+.thumbnail.capped-size {
+  max-width: calc((100% - 5 * var(--spacing-sm)) / 6);
+}
+
+/* Center thumbnails when there are less than 5 images */
+.thumbnails-container.centered {
+  justify-content: center;
 }
 
 .thumbnail-image {
